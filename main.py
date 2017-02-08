@@ -1,6 +1,8 @@
 from transactions import transaction_create
+from configurations import PagarMeInit
 
-print transaction_create({
+PagarMeInit("ak_test_zXjKL8u5uxn25HNxHviPbhthNV0nL7")
+a = transaction_create({
   "api_key":"ak_test_zXjKL8u5uxn25HNxHviPbhthNV0nL7",
   "plan":{
     "amount":31000,
@@ -31,18 +33,7 @@ print transaction_create({
   } ,
   "capture": False,
   "payment_method":"credit_card",
-  "amount": 122,
-  "split_rules": [
-    {
-      "recipient_id": "re_civb4p9l7004xbm6dhsetkpj8",
-      "percentage": 50,
-      "liable": True,
-      "charge_processing_fee": True
-    },{
-      "recipient_id": "re_civb4o6zr003u3m6e8dezzja6",
-      "percentage": 50,
-      "liable": True,
-      "charge_processing_fee": True
-    }
-  ]
+  "amount": 122
 })
+
+print(a)

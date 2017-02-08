@@ -1,0 +1,2 @@
+class PagarmeLibException(Exception):
+    pass
