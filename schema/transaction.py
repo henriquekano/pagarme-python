@@ -1,4 +1,5 @@
 from datetime import datetime
+from customer import schema_customer
 schema_transaction = {
     'payment_method': {
         'type': str,
@@ -6,43 +7,6 @@ schema_transaction = {
         'enum': [
             'credit_card', 'boleto'
         ],
-        'credit_card': {
-            'or': [
-                    {
-                    'card_number': {
-                        'type': str,
-                        'required': True,
-                        'length': 16,
-                        'enum': ['credit_card', 'boleto']
-                    },
-                    'card_cvv': {
-                        'type': str,
-                        'required': True,
-                        'min_length': 3,
-                        'max_length': 4
-                    },
-                    'card_holder_name': {
-                        'type': str,
-                        'required': True
-                    },
-                    'card_expiration_date': {
-                        'type': datetime,
-                        'format': 'MMyy',
-                        'required': True
-                    }
-                },{
-                    'card_id': {
-                        'type': str,
-                        'required': True
-                    }
-                },{
-                    'card_hash': {
-                        'type': str,
-                        'required': True
-                    }
-                }
-            ]
-        }
     },
     'amount': {
         'type': int,
@@ -78,7 +42,7 @@ schema_transaction = {
         'type': dict
     },
     'customer': {
-        'schema': ''
+        'schema': schema_customer
     },
     'split_rules': {
         'all': {
