@@ -1,5 +1,5 @@
-from transactions import transaction_create
-from configurations import PagarMeInit
+from lib.transactions import transaction_create
+from lib.configurations import PagarMeInit
 
 PagarMeInit("ak_test_zXjKL8u5uxn25HNxHviPbhthNV0nL7")
 a = transaction_create({
