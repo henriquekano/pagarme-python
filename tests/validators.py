@@ -363,16 +363,22 @@ class Validators(unittest.TestCase):
                 'parameter': {
                     'schema': {
                         'sub_parameter': {
-                            'max': 5,
-                            'type': int,
-                            'enum': [1, 2]
+                            'schema': {
+                                'sub_sub_parameter': {
+                                    'max': 5,
+                                    'type': int,
+                                    'enum': [1, 2]
+                                }
+                            }
                         }
                     }
                 }
             }
             parameters_dict = {
                 'parameter': {
-                    'sub_parameter': 'ola'
+                    'sub_parameter': {
+                        'sub_sub_parameter': 'ola'
+                    }
                 }
             }
             check_schema(schema)(lambda *args: args)(parameters_dict)
@@ -384,17 +390,103 @@ class Validators(unittest.TestCase):
             'parameter': {
                 'schema': {
                     'sub_parameter': {
-                        'max': 5,
-                        'type': int,
-                        'enum': [1, 2]
+                        'schema': {
+                            'sub_sub_parameter': {
+                                'max': 5,
+                                'type': int,
+                                'enum': [1, 2]
+                            }
+                        }
                     }
                 }
             }
         }
         parameters_dict = {
             'parameter': {
-                'sub_parameter': 2
+                'sub_parameter': {
+                    'sub_sub_parameter': 2
+                }
             }
+        }
+        check_schema(schema)(lambda *args: args)(parameters_dict)
+        # assert doesnt raises exceptions
+
+    def test_or_command_both_fail(self):
+        with self.assertRaises(PagarmeLibException) as exception:
+            schema = {
+                'or': [
+                    {
+                        'parameter1': {
+                            'type': str
+                        },
+                        'parameter2': {
+                            'type': int
+                        }
+                    }
+                ]
+            }
+            parameters_dict = {
+                'parameter1': 0,
+                'parameter2': ''
+            }
+            check_schema(schema)(lambda *args: args)(parameters_dict)
+        self.assertEquals(type(exception.exception.value), list)
+        self.assertEquals(len(exception.exception.value), 2)
+
+    def test_or_command_one_success(self):
+        schema = {
+            'or': [
+                {
+                    'parameter1': {
+                        'type': str
+                    },
+                    'parameter2': {
+                        'type': int
+                    }
+                }
+            ]
+        }
+        parameters_dict = {
+            'parameter1': ''
+        }
+        check_schema(schema)(lambda *args: args)(parameters_dict)
+        # assert doesnt raises exceptions
+
+    def test_or_command_other_success(self):
+        schema = {
+            'or': [
+                {
+                    'parameter1': {
+                        'type': str
+                    },
+                    'parameter2': {
+                        'type': int
+                    }
+                }
+            ]
+        }
+        parameters_dict = {
+            'parameter2': 0
+        }
+        check_schema(schema)(lambda *args: args)(parameters_dict)
+        # assert doesnt raises exceptions
+
+    def test_or_command_both_success(self):
+        schema = {
+            'or': [
+                {
+                    'parameter1': {
+                        'type': str
+                    },
+                    'parameter2': {
+                        'type': int
+                    }
+                }
+            ]
+        }
+        parameters_dict = {
+            'parameter1': '',
+            'parameter2': 0
         }
         check_schema(schema)(lambda *args: args)(parameters_dict)
         # assert doesnt raises exceptions

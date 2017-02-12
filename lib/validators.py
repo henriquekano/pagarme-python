@@ -11,6 +11,10 @@ from pagarme_lib_exception import PagarmeLibException
 
 
 def _add_errors_to_list(errors_list, *args):
+    """
+    Args should be the errors individuals.
+    Passing a list breaks the code.
+    """
     errors = list(errors_list)
     for error in args:
         if error is not None:
@@ -32,7 +36,8 @@ def check_api_key(func):
     return wrapper
 
 
-def _check_parameters_constraints(parameter_name, parameter_constraints, parameters_dict):
+def _check_parameters_constraints(
+        parameter_name, parameter_constraints, parameters_dict):
     errors = []
     if 'type' in parameter_constraints:
         parameter_type = parameter_constraints['type']
@@ -76,11 +81,26 @@ def _check_parameters_constraints(parameter_name, parameter_constraints, paramet
             errors,
             check_min_length(parameter_name, min_length, parameters_dict)
         )
+    if 'schema' in parameter_constraints:
+        sub_schema = parameter_constraints['schema']
+        sub_object = parameters_dict.get(parameter_name, {})
+        errors += _check_schema_recursive(sub_schema, sub_object)
     return errors
 
 
-def check_special_constraints():
-    return []
+def _check_special_constraints(command, command_parameters, parameters_dict):
+    errors = []
+    if command is 'or':
+        for or_object in command_parameters:
+            for parameter, constraints in or_object.iteritems():
+                error = _check_parameters_constraints(
+                            parameter, constraints, parameters_dict)
+                if len(error) <= 0:
+                    errors = []
+                    break
+                else:
+                    errors += error
+    return errors
 
 
 def _check_schema_recursive(schema, parameters_dict):
@@ -89,13 +109,9 @@ def _check_schema_recursive(schema, parameters_dict):
         if parameter_name in parameters_dict:
             errors = _check_parameters_constraints(
                 parameter_name, constraints, parameters_dict)
-            # check sub schemas
-            if 'schema' in constraints:
-                sub_schema = constraints['schema']
-                sub_object = parameters_dict.get(parameter_name, {})
-                return _check_schema_recursive(sub_schema, sub_object) + errors
         else:
-            errors += check_special_constraints()
+            errors += _check_special_constraints(
+                            parameter_name, constraints, parameters_dict)
     return errors
 
 
