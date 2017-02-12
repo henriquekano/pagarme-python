@@ -7,7 +7,7 @@ def check_existence(parameter, parameters_list):
         }
 
 def check_parameter_type(parameter, parameter_type, parameters_list):
-    if(type(parameters_list[parameter]) is not parameter_type):
+    if(type(parameters_list.get(parameter)) is not parameter_type):
         return {
             'parameter': parameter,
             'type': 'format',
@@ -15,7 +15,7 @@ def check_parameter_type(parameter, parameter_type, parameters_list):
         }
 
 def check_in_enum(parameter, parameter_enum, parameters_list):
-    if(parameters_list[parameter] not in parameter_enum):
+    if(parameters_list.get(parameter) not in parameter_enum):
         return {
             'parameter': parameter,
             'type': 'format',
@@ -23,7 +23,7 @@ def check_in_enum(parameter, parameter_enum, parameters_list):
         }
 
 def check_max(parameter, max_value, parameters_list):
-    if(parameters_list[parameter] > max_value):
+    if(parameters_list.get(parameter) > max_value):
         return {
             'parameter': parameter,
             'type': 'format',
@@ -31,15 +31,15 @@ def check_max(parameter, max_value, parameters_list):
         }
 
 def check_min(parameter, min_value, parameters_list):
-    if(parameters_list[parameter] < min_value):
+    if(parameters_list.get(parameter) < min_value):
         return {
             'parameter': parameter,
             'type': 'format',
-            'message': (parameter + ' should be at minimum ' + str(max_value))
+            'message': (parameter + ' should be at minimum ' + str(min_value))
         }
 
 def check_max_length(parameter, max_length, parameters_list):
-    if(len(parameters_list[parameter]) > max_length):
+    if(len(parameters_list.get(parameter)) > max_length):
         return {
             'parameter': parameter,
             'type': 'format',
@@ -47,7 +47,7 @@ def check_max_length(parameter, max_length, parameters_list):
         }
 
 def check_min_length(parameter, min_length, parameters_list):
-    if(len(parameters_list[parameter]) < min_length):
+    if(len(parameters_list.get(parameter)) < min_length):
         return {
             'parameter': parameter,
             'type': 'format',
