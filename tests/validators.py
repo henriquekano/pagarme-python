@@ -1,6 +1,6 @@
 import unittest
 from lib.validators import (
-    check_api_key, _check_parameters_constraints
+    check_api_key, _check_parameters_constraints, check_schema
 )
 from lib.pagarme_lib_exception import PagarmeLibException
 
@@ -356,3 +356,45 @@ class Validators(unittest.TestCase):
         )
         self.assertTrue(type(errors) is list)
         self.assertEquals(len(errors), 0)
+
+    def test_check_sub_schema_fail(self):
+        with self.assertRaises(PagarmeLibException) as exception:
+            schema = {
+                'parameter': {
+                    'schema': {
+                        'sub_parameter': {
+                            'max': 5,
+                            'type': int,
+                            'enum': [1, 2]
+                        }
+                    }
+                }
+            }
+            parameters_dict = {
+                'parameter': {
+                    'sub_parameter': 'ola'
+                }
+            }
+            check_schema(schema)(lambda *args: args)(parameters_dict)
+        self.assertTrue(type(exception.exception.value), list)
+        self.assertEquals(len(exception.exception.value), 3)
+
+    def test_check_sub_schema_success(self):
+        schema = {
+            'parameter': {
+                'schema': {
+                    'sub_parameter': {
+                        'max': 5,
+                        'type': int,
+                        'enum': [1, 2]
+                    }
+                }
+            }
+        }
+        parameters_dict = {
+            'parameter': {
+                'sub_parameter': 2
+            }
+        }
+        check_schema(schema)(lambda *args: args)(parameters_dict)
+        # assert doesnt raises exceptions
