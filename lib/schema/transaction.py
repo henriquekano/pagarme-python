@@ -1,5 +1,6 @@
 from datetime import datetime
 from customer import schema_customer
+from split_rule import schema_split_rule
 schema_transaction = {
     'payment_method': {
         'type': str,
@@ -7,6 +8,23 @@ schema_transaction = {
         'enum': [
             'credit_card', 'boleto'
         ],
+    },
+    'if': {
+        'condition': {
+            'payment_method': 'credit_card'
+        },
+        'do' : {
+            'or': {
+                'card_id': {
+                    'type': str,
+                    'required': True
+                },
+                'card_hash': {
+                    'type': str,
+                    'required': True
+                }
+            }
+        }
     },
     'amount': {
         'type': int,
@@ -38,15 +56,13 @@ schema_transaction = {
     'capture': {
         'type': bool
     },
-    'metadata': {
-        'type': dict
-    },
     'customer': {
         'schema': schema_customer
     },
     'split_rules': {
+        'type': list,
         'all': {
-            'schema': ''
+            'schema': schema_split_rule
         }
     }
     
