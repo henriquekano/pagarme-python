@@ -9,23 +9,25 @@ schema_transaction = {
             'credit_card', 'boleto'
         ],
     },
-    'if': {
-        'condition': {
-            'payment_method': 'credit_card'
-        },
-        'do' : {
-            'or': {
-                'card_id': {
-                    'type': str,
-                    'required': True
-                },
-                'card_hash': {
-                    'type': str,
-                    'required': True
+    'if': [
+        {
+            'condition': 
+                lambda parameters_dict: 
+                    parameters_dict.get('payment_method') is 'credit_card'
+            ,'then' : {
+                'or': {
+                    'card_id': {
+                        'type': str,
+                        'required': True
+                    },
+                    'card_hash': {
+                        'type': str,
+                        'required': True
+                    }
                 }
             }
         }
-    },
+    ],
     'amount': {
         'type': int,
         'required': True
