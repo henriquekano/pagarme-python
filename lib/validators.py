@@ -27,7 +27,7 @@ def check_api_key(func):
         errors = []
         errors = _add_errors_to_list(
             errors,
-            check_existence('api_key', parameters_dict),
+            check_existence('api_key', True, parameters_dict),
             check_parameter_type('api_key', str, parameters_dict)
         )
         if (len(errors) > 0):
@@ -49,7 +49,7 @@ def _check_parameters_constraints(
     if 'required' in parameter_constraints:
         errors = _add_errors_to_list(
             errors,
-            check_existence(parameter_name, parameters_dict)
+            check_existence(parameter_name, True, parameters_dict)
         )
     if 'enum' in parameter_constraints:
         enum_list = parameter_constraints['enum']
@@ -84,7 +84,7 @@ def _check_parameters_constraints(
     if 'schema' in parameter_constraints:
         sub_schema = parameter_constraints['schema']
         sub_object = parameters_dict.get(parameter_name, {})
-        errors += _check_schema_recursive(sub_schema, sub_object)
+        return errors + _check_schema_recursive(sub_schema, sub_object)
     return errors
 
 
@@ -92,7 +92,7 @@ def _check_special_constraints(command, command_parameters, parameters_dict):
     errors = []
     if command is 'or':
         for or_object in command_parameters:
-            for parameter, constraints in or_object.iteritems():
+            for parameter, constraints in or_object.items():
                 error = _check_parameters_constraints(
                             parameter, constraints, parameters_dict)
                 if len(error) <= 0:
@@ -105,12 +105,13 @@ def _check_special_constraints(command, command_parameters, parameters_dict):
 
 def _check_schema_recursive(schema, parameters_dict):
     errors = []
-    for parameter_name, constraints in schema.iteritems():
-        if parameter_name in parameters_dict:
-            errors = _check_parameters_constraints(
+    for parameter_name, constraints in schema.items():
+        name_in_parameters = parameter_name in parameters_dict
+        required_parameter = 'required' in constraints
+        if  name_in_parameters or required_parameter:
+            errors += _check_parameters_constraints(
                 parameter_name, constraints, parameters_dict)
-        else:
-            errors += _check_special_constraints(
+        errors += _check_special_constraints(
                             parameter_name, constraints, parameters_dict)
     return errors
 
