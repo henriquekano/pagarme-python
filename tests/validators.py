@@ -11,6 +11,20 @@ class Validators(unittest.TestCase):
         super(Validators, self).__init__(*args, **kwargs)
         self.decorated_check_api_key = check_api_key(lambda *args: args)
 
+    def test_check_schema_with_empty_dict(self):
+        with self.assertRaises(PagarmeLibException) as exception:
+            schema = {
+                'parameter1': {
+                    'type': str,
+                    'required': True,
+                    'max_length': 5
+                }
+            }
+            parameters_dict = {}
+            check_schema(schema)(lambda *args: args)(parameters_dict)
+        self.assertEquals(type(exception.exception.value), list)
+        self.assertEquals(len(exception.exception.value), 3)
+
     def test_check_api_key_existence_fail(self):
         with self.assertRaises(PagarmeLibException) as exception:
             parameters = {
@@ -356,6 +370,24 @@ class Validators(unittest.TestCase):
         )
         self.assertTrue(type(errors) is list)
         self.assertEquals(len(errors), 0)
+
+    def test_check_multiple_parameters_fail(self):
+        with self.assertRaises(PagarmeLibException) as exception:
+            schema = {
+                'parameter1': {
+                    'max_length': 5
+                },
+                'parameter2': {
+                    'type': str
+                }
+            }
+            parameters_dict = {
+                'parameter1': '123456',
+                'parameter2': 0
+            }
+            check_schema(schema)(lambda *args: args)(parameters_dict)
+        self.assertEquals(type(exception.exception.value), list)
+        self.assertEquals(len(exception.exception.value), 2)
 
     def test_check_sub_schema_fail(self):
         with self.assertRaises(PagarmeLibException) as exception:
