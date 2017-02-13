@@ -20,12 +20,12 @@ class BaseValidators(unittest.TestCase):
 
     def test_check_dict_key_existence_fail(self):
         key = "no_parameter"
-        errors = check_existence(key, BaseValidators.base_dictionary)
+        errors = check_existence(key, True, BaseValidators.base_dictionary)
         self.assertTrue(type(errors) is dict)
 
     def test_check_dict_key_existence_success(self):
         key = "str_parameter"
-        errors = check_existence(key, BaseValidators.base_dictionary)
+        errors = check_existence(key, True, BaseValidators.base_dictionary)
         self.assertTrue(errors is None)
 
     def test_check_parameter_type_fail(self):
