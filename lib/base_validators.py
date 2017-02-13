@@ -6,8 +6,8 @@ def _format_error(parameter_name, type_name, message):
     }
 
 
-def check_existence(parameter, parameters_list):
-    if(parameter not in parameters_list):
+def check_existence(parameter, should_exist, parameters_list):
+    if(parameter not in parameters_list and should_exist):
         return _format_error(
             parameter,
             'existence',
@@ -48,7 +48,7 @@ def check_max(parameter, max_value, parameters_list):
         parameter_value = int(parameter_value)
         if(parameter_value > max_value):
             return error
-    except ValueError:
+    except (ValueError, TypeError):
         return error
 
 
@@ -64,7 +64,7 @@ def check_min(parameter, min_value, parameters_list):
         parameter_value = int(parameter_value)
         if(parameter_value < min_value):
             return error
-    except ValueError:
+    except (ValueError, TypeError):
         return error
 
 
@@ -83,7 +83,7 @@ def check_max_length(parameter, max_length, parameters_list):
         parameter_value = str(parameter_value)
         if(len(parameters_list.get(parameter)) > max_length):
             return error
-    except ValueError:
+    except (ValueError, TypeError):
         return error
 
 
@@ -102,5 +102,5 @@ def check_min_length(parameter, min_length, parameters_list):
         parameter_value = str(parameter_value)
         if(len(parameters_list.get(parameter)) < min_length):
             return error
-    except ValueError:
+    except (ValueError, TypeError):
         return error
