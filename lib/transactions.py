@@ -1,4 +1,4 @@
-from schema.transaction import schema_transaction
+from schema.transaction import build_schema_transaction
 from validators import check_schema, check_api_key
 from response_formatter import format_datetimes
 from request_formatter import ensure_api_key
@@ -7,7 +7,7 @@ import requests
 
 @ensure_api_key
 @check_api_key
-@check_schema(schema_transaction)
+@check_schema(build_schema_transaction)
 @format_datetimes
 def transaction_create(parameters):
     url = get_full_url('/transactions')

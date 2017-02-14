@@ -100,12 +100,6 @@ def _check_special_constraints(command, command_parameters, parameters_dict):
                     break
                 else:
                     errors += error
-    if command is 'if':
-        for if_object in command_parameters:
-            condition = if_object.get('condition')(parameters_dict)
-            if condition:
-                constraints = if_object.get('then')
-                errors += _check_schema_recursive(constraints, parameters_dict)
     return errors
 
 
@@ -122,9 +116,10 @@ def _check_schema_recursive(schema, parameters_dict):
     return errors
 
 
-def check_schema(schema):
+def check_schema(schema_builder):
     def function_wrapper(func):
         def parameters_wrapper(parameters_dict):
+            schema = schema_builder(parameters_dict)
             errors = _check_schema_recursive(schema, parameters_dict)
             if len(errors) > 0:
                 raise PagarmeLibException(errors)
