@@ -117,13 +117,13 @@ def _check_schema_recursive(schema, parameters_dict):
 
 
 def check_schema(schema_builder):
-    def function_wrapper(func):
-        def parameters_wrapper(parameters_dict):
+    def _function_wrapper(func):
+        def _parameters_wrapper(parameters_dict):
             schema = schema_builder(parameters_dict)
             errors = _check_schema_recursive(schema, parameters_dict)
             if len(errors) > 0:
                 raise PagarmeLibException(errors)
             else:
                 return func(parameters_dict)
-        return parameters_wrapper
-    return function_wrapper
+        return _parameters_wrapper
+    return _function_wrapper

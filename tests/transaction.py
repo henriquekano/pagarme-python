@@ -11,7 +11,8 @@ class Validators(unittest.TestCase):
     def test_transaction_creation_fail(self):
         with self.assertRaises(Exception) as exception:
             transaction_create({})
-        self.assertEquals(len(exception.exception.value), 6)
+        print exception.exception.value
+        self.assertEquals(len(exception.exception.value), 7)
 
     def test_boleto_transaction_creation(self):
         with self.assertRaises(PagarmeLibException) as exception:
