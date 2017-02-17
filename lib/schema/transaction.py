@@ -57,6 +57,8 @@ def build_schema_transaction(parameters_dict):
                 'type': str,
                 'required': True
             }
+        elif 'card_number' in parameters_dict or 'card_expiration_date' in parameters_dict or 'card_holder_name' in parameters_dict or 'card_cvv' in parameters_dict:
+            print ''
         else:
             schema_transaction['card_hash'] = {
                 'type': str,
