@@ -1,5 +1,5 @@
 import unittest
-from lib.response_formatter import format_datetimes
+from lib.response_formatter import _format_datetimes
 from datetime import datetime
 
 class ResponseFormatter(unittest.TestCase):
@@ -19,7 +19,7 @@ class ResponseFormatter(unittest.TestCase):
                 'expiration_date': '1220'
             }
         }
-        formatted = format_datetimes(lambda x: x)(datetime_dict)
+        formatted = _format_datetimes(lambda x: x)(datetime_dict)
         self.assertTrue(type(datetime_dict.get('date_created')) is datetime)
         self.assertTrue(type(datetime_dict.get('date_updated')) is datetime)
         self.assertTrue(type(datetime_dict.get('boleto_expiration_date')) is datetime)

@@ -16,12 +16,14 @@ def _format_month_year_date(value):
 
 def _format_datetime_based_on_key(key, value):
     if key in ['date_created', 'date_updated', 'boleto_expiration_date']:
-        return _format_isodatetime(value)
+        if value is not None:
+            return _format_isodatetime(value)
     if key in ['expiration_date']:
-        return _format_month_year_date(value)
+        if value is not None:
+            return _format_month_year_date(value)
     return value
 
-def format_datetimes(func):
+def _format_datetimes(func):
     def _datetime_formatter(parameters_list):
         response = func(parameters_list)
         _traverse_json_recursive(response, _format_datetime_based_on_key)
