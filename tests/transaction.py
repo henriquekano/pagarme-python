@@ -3,7 +3,7 @@ from lib.transactions import transaction_create, transaction_capture
 from lib.pagarme_lib_exception import PagarmeLibException
 from lib.configurations import PagarMeInit
 
-class Transactions(unittest.TestCase):
+class Transaction(unittest.TestCase):
 
     def setUp(self):
         PagarMeInit('ak_test_zXjKL8u5uxn25HNxHviPbhthNV0nL7')
@@ -52,8 +52,11 @@ class Transactions(unittest.TestCase):
     # def test_splitted_credit_card_transaction_creation(self):
 
     def test_capture_transaction(self):
-        transaction = created_transaction = transaction_create({
-            'card_id': '4242424242424242',
+        created_transaction = transaction_create({
+            'card_number': '4242424242424242',
+            'card_cvv': '122',
+            'card_holder_name': 'SDFSDF',
+            'card_expiration_date': '1220',
             'capture': False,
             'customer':{
                 'email':'email.do.cliente@gmail.com',
@@ -73,10 +76,9 @@ class Transactions(unittest.TestCase):
             'payment_method':'credit_card',
             'amount': 122
         })
-        print transaction
-        self.assertEquals(transaction.get('status'), 'authorized')
-        transaction = transaction_capture(transaction)
-        self.assertEquals(transaction.get('status'), 'captured')
+        self.assertEquals(created_transaction.get('status'), 'authorized')
+        created_transaction = transaction_capture(transaction=created_transaction)
+        self.assertEquals(created_transaction.get('status'), 'paid')
 
     # def test_capture_with_split_rules(self):
 
