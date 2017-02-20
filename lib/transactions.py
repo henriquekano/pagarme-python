@@ -25,3 +25,16 @@ def transaction_capture(id=None, transaction={}, metadata={}, split_rules=[]):
         response = pagarme_requests.post(path, parameters_dict)
         return response.body
     return _transaction_capture(parameters)
+
+def transaction_refund(id=None, transaction={}, amount=None):
+    parameters = {}
+    if amount is not None:
+        parameters['amount'] = amount
+    elif len(transaction) > 0 and amount is None:
+        parameters['amount'] = transaction.get('amount', 0)
+    @ensure_api_key
+    def _transaction_refund(parameters_dict):
+        path = '/transactions/%s/refund' % (str(transaction.get('id', id)))
+        response = pagarme_requests.post(path, parameters_dict)
+        return response.body
+    return _transaction_refund(parameters)
