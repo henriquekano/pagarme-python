@@ -29,3 +29,9 @@ def _format_datetimes(func):
         _traverse_json_recursive(response, _format_datetime_based_on_key)
         return response
     return _datetime_formatter
+
+def _format_datetimes_on_list(func):
+    def _datetime_formatter(parameters_list):
+        response = func(parameters_list)        
+        return map(lambda item: _traverse_json_recursive(item, _format_datetime_based_on_key), response)
+    return _datetime_formatter

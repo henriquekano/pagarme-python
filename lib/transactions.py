@@ -1,6 +1,6 @@
 from schema.transaction import build_schema_transaction
 from validators import check_schema, check_api_key
-from response_formatter import _format_datetimes
+from response_formatter import _format_datetimes, _format_datetimes_on_list
 from request_formatter import ensure_api_key, _format_booleans
 import pagarme_requests
 
@@ -38,3 +38,14 @@ def transaction_refund(id=None, transaction={}, amount=None):
         response = pagarme_requests.post(path, parameters_dict)
         return response.body
     return _transaction_refund(parameters)
+
+@ensure_api_key
+@_format_booleans
+@_format_datetimes_on_list
+def _transaction_find(parameters_dict):
+    path = '/transactions'
+    response = pagarme_requests.get(path, parameters_dict)
+    return response.body
+
+def transaction_find_by_id(id):
+    return _transaction_find({'id': id})

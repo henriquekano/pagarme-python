@@ -2,7 +2,8 @@ import unittest
 from lib.transactions import (
     transaction_create,
     transaction_capture,
-    transaction_refund
+    transaction_refund,
+    transaction_find_by_id
 )
 from lib.pagarme_lib_exception import PagarmeLibException
 from lib.configurations import PagarMeInit
@@ -110,6 +111,34 @@ class Transaction(unittest.TestCase):
         })
         refunded_transaction = transaction_refund(transaction=created_transaction)
         self.assertEquals(refunded_transaction.get('status'), 'refunded')
+
+    def test_transaction_find_by_id(self):
+        created_transaction = transaction_create({
+            'card_number': '4242424242424242',
+            'card_cvv': '122',
+            'card_holder_name': 'SDFSDF',
+            'card_expiration_date': '1220',
+            'customer':{
+                'email':'email.do.cliente@gmail.com',
+                'name':'nome',
+                'document_number':'334.863.289-72',
+                'address':{
+                    'zipcode':'70631-035',
+                    'neighborhood':'bairro',
+                    'street':'rua',
+                    'street_number':'122'
+                },
+                'phone': {
+                    'number':'87654321',
+                    'ddd':'11'
+                }
+            },
+            'payment_method':'credit_card',
+            'amount': 122
+        })
+        found_transaction = transaction_find_by_id(id=created_transaction.get('id'))
+        self.assertEquals(type(found_transaction), list)
+        self.assertEquals(len(found_transaction), 1)
     # def test_capture_with_split_rules(self):
 
     # def test_capture_with_metadata(self):
