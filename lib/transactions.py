@@ -49,3 +49,6 @@ def _transaction_find(parameters_dict):
 
 def transaction_find_by_id(id):
     return _transaction_find({'id': id})
+
+def transaction_find_list(filters):
+    return _transaction_find(filters)
