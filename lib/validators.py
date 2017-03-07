@@ -87,19 +87,18 @@ def _check_parameters_constraints(
         return errors + _check_schema_recursive(sub_schema, sub_object)
     return errors
 
+def _list_indexed_by_index(list_param):
+    return {key: value for key, value in enumerate(list_param)}
 
-def _check_special_constraints(command, command_parameters, parameters_dict):
+def _check_special_constraints(parameter_name, constraints, parameters_dict):
     errors = []
-    if command is 'or':
-        for or_object in command_parameters:
-            for parameter, constraints in or_object.items():
-                error = _check_parameters_constraints(
-                            parameter, constraints, parameters_dict)
-                if len(error) <= 0:
-                    errors = []
-                    break
-                else:
-                    errors += error
+    if 'all' in constraints:
+        sub_schema = constraints.get('all')
+        parameters_list = parameters_dict.get(parameter_name)
+        parameters_list_indexed = _list_indexed_by_index(parameters_list)
+        if parameters_list is not None:
+            for index, item in enumerate(parameters_list):
+                errors += _check_parameters_constraints(index, sub_schema, parameters_list_indexed)
     return errors
 
 
@@ -111,8 +110,8 @@ def _check_schema_recursive(schema, parameters_dict):
         if  name_in_parameters or required_parameter:
             errors += _check_parameters_constraints(
                 parameter_name, constraints, parameters_dict)
-        errors += _check_special_constraints(
-                            parameter_name, constraints, parameters_dict)
+            errors += _check_special_constraints(
+                parameter_name, constraints, parameters_dict)
     return errors
 
 

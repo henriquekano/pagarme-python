@@ -446,82 +446,32 @@ class Validators(unittest.TestCase):
         check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
         # assert doesnt raises exceptions
 
-    def test_or_command_both_fail(self):
+    def test_all_command_success(self):
+        schema = {
+            'alist': {
+                'all': {
+                    'type': str
+                }
+            }
+        }
+        parameters_dict = {
+            'alist': ['1', '2', '3']
+        }
+        check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
+        # assert doesnt raises exceptions
+
+    def test_all_command_one_fail(self):
         with self.assertRaises(PagarmeLibException) as exception:
             schema = {
-                'or': [
-                    {
-                        'parameter1': {
-                            'type': str
-                        },
-                        'parameter2': {
-                            'type': int
-                        }
+                'alist': {
+                    'all': {
+                        'type': str
                     }
-                ]
+                }
             }
             parameters_dict = {
-                'parameter1': 0,
-                'parameter2': ''
+                'alist': ['1', 2, '3']
             }
             check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
-        self.assertEquals(type(exception.exception.value), list)
-        self.assertEquals(len(exception.exception.value), 2)
-
-    def test_or_command_one_success(self):
-        schema = {
-            'or': [
-                {
-                    'parameter1': {
-                        'type': str
-                    },
-                    'parameter2': {
-                        'type': int
-                    }
-                }
-            ]
-        }
-        parameters_dict = {
-            'parameter1': ''
-        }
-        check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
-        # assert doesnt raises exceptions
-
-    def test_or_command_other_success(self):
-        schema = {
-            'or': [
-                {
-                    'parameter1': {
-                        'type': str
-                    },
-                    'parameter2': {
-                        'type': int
-                    }
-                }
-            ]
-        }
-        parameters_dict = {
-            'parameter2': 0
-        }
-        check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
-        # assert doesnt raises exceptions
-
-    def test_or_command_both_success(self):
-        schema = {
-            'or': [
-                {
-                    'parameter1': {
-                        'type': str
-                    },
-                    'parameter2': {
-                        'type': int
-                    }
-                }
-            ]
-        }
-        parameters_dict = {
-            'parameter1': '',
-            'parameter2': 0
-        }
-        check_schema(self._schema_builder_builder(schema))(lambda *args: args)(parameters_dict)
-        # assert doesnt raises exceptions
+        self.assertTrue(type(exception.exception.value), list)
+        self.assertEquals(len(exception.exception.value), 1)
