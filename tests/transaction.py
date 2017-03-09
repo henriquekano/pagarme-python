@@ -55,7 +55,41 @@ class Transaction(unittest.TestCase):
         self.assertIsNotNone(created_transaction.get('id'))
         # assert it doesnt raise an exception
 
-    # def test_splitted_credit_card_transaction_creation(self):
+    def test_splitted_credit_card_transaction_creation(self):
+        created_transaction = transaction_create({
+            'card_number': '4916479979225670',
+            'card_cvv': '122',
+            'card_holder_name': 'SDFSDF',
+            'card_expiration_date': '1220',
+            'customer':{
+                'email':'email.do.cliente@gmail.com',
+                'name':'nome',
+                'document_number':'334.863.289-72',
+                'address':{
+                    'zipcode':'70631-035',
+                    'neighborhood':'bairro',
+                    'street':'rua',
+                    'street_number':'122'
+                },
+                'phone': {
+                    'number':'87654321',
+                    'ddd':'11'
+                }
+            },
+            'split_rules': [
+                {
+                    'recipient_id': 're_cix7pnghi02wm196emgbthh8u',
+                    'percentage': '50'
+                },{
+                    'recipient_id': 're_cix7pxz6f02ppcv6dn4ckcrcc',
+                    'percentage': '50'
+                }
+            ],
+            'payment_method':'credit_card',
+            'amount': 122
+        })
+        self.assertIsNotNone(created_transaction.get('id'))
+        self.assertEquals(len(created_transaction.get('split_rules')), 2);
 
     def test_capture_transaction(self):
         created_transaction = transaction_create({
